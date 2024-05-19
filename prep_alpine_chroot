@@ -4,6 +4,7 @@ set -e
 
 if [ $# -ne 2 ]; then
     echo "Usage: $0 <host_low_username> <arch>"
+    exit 1
 fi
 
 MIRROR='https://uk.alpinelinux.org/alpine/latest-stable/main'
@@ -20,7 +21,3 @@ cp startup alpine_root/workdir
 cp capture_the_flag_inner alpine_root/workdir/capture_the_flag
 chown -R root:root alpine_root
 chown $OUTERUSER:$OUTERUSER alpine_root/workdir
-pushd alpine_root/bin
-for util in "echo ls cat"; do
-    ln -s busybox $util
-done

@@ -1,0 +1,3 @@
+load_system_dawg false
+load_freq_dawg false
+tessedit_write_images true

@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+import sys
+fname = sys.argv[1]
+lines = open(fname).read().split('\n')
+n = len(lines)
+width = len(str(n))
+
+for i, line in enumerate(lines):
+    print(f"{i+1: >{width}} {line}")

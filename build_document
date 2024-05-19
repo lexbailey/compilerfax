@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+
+def font(name, size=12):
+    return f"""/{name} findfont
+{size} scalefont
+setfont
+"""
+
+def pos(x,y):
+    return f"""{x} {y} moveto"""
+
+def text(s):
+    s = ''.join([hex(c)[2:] for c in s.encode()])
+    return f"""<{s}> show"""
+
+cur_y = 740
+
+def nextline():
+    global cur_y
+    cur_y -= 12
+    if cur_y <= 80:
+        cur_y = 740
+        return "showpage"
+    return ""
+
+def section(heading, body):
+    global cur_y
+    if body.strip() == '':
+        return ""
+    res= f"""{font("TimesNew-Bold")}
+newpath
+{pos(70, cur_y)}
+{text(heading)}
+{font("Calibri")}
+"""+nextline()
+    for l in body.split('\n'):
+        while len(l) > 60:
+            a, l = l[0:60],l[60:]
+            res += f"""
+{pos(100, cur_y)}
+{text(a)}
+"""+nextline()
+            
+        res += f"""
+{pos(100, cur_y)}
+{text(l)}
+"""+nextline()
+
+    return res
+
+doc = f"""
+{section("Request", open("outputs/request").read())}
+{section("Result Summary", open("outputs/summary").read())}
+{section("Compiler Stdout", open("outputs/compilation_stdout").read())}
+{section("Compiler Stderr", open("outputs/compilation_stderr").read())}
+{section("Program Stdout", open("outputs/program_stdout").read())}
+{section("Program Stderr", open("outputs/program_stderr").read())}
+showpage
+"""
+
+with open("result.ps", "w+") as f:
+    f.write(doc)
+

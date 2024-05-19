@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <program.c>"
+    exit 1
+fi
+
+PROGRAMTIFF="$1"
+
+
+PROGRAM="ocr_result.c"
+tesseract "$PROGRAMTIFF" "$PROGRAM" --user-words CCode tessconfig
+mv "$PROGRAM.txt" "$PROGRAM"
+
+DESTPROG="alpine_root/workdir/program.c"
+
+cp "$PROGRAM" "$DESTPROG"
+chown $OUTERUSER:$OUTERUSER "$DESTPROG"
+
+echo "" > outputs/program_stderr
+echo "" > outputs/program_stdout
+mkdir -p outputs
+set +e
+COMPSTART=$(date --rfc-3339=seconds)
+./with_chroot 'gcc program.c -o program' 2> outputs/compilation_stderr > outputs/compilation_stdout
+COMPILE_RC=$?
+COMPEND=$(date --rfc-3339=seconds)
+if [ $COMPILE_RC -eq 0 ]; then
+    PROGSTART=$(date --rfc-3339=seconds)
+    ./with_chroot ./program 2> outputs/program_stderr > outputs/program_stdout
+    PROGRAM_RC=$?
+    PROGEND=$(date --rfc-3339=seconds)
+fi
+
+set -e
+
+REQ="outputs/request"
+echo "Request from '$SENDER' to compile and run C code" > $REQ
+echo "---- Program listing follows ----" >> $REQ
+./line_numbers $PROGRAM >> $REQ
+
+SUM="outputs/summary"
+if [ $COMPILE_RC -eq 0 ]; then
+    echo "Compilation successful" > $SUM
+    if [ $PROGRAM_RC -eq 0 ]; then
+        echo "Program execution successful" >> $SUM
+    else
+        echo "Program failed with exit code $PROGRAM_RC" >> $SUM
+    fi
+else
+    echo "Compilation failed with exit code $COMPILE_RC" > $SUM
+fi
+
+echo "Compilation started at $COMPSTART" >> $SUM
+echo "Compilation ended at   $COMPEND" >> $SUM
+if [ $COMPILE_RC -eq 0 ]; then
+    echo "Program execution started at $PROGSTART" >> $SUM
+    echo "Program execution ended at   $PROGEND" >> $SUM
+fi
+
+echo Complete
+

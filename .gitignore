@@ -4,3 +4,4 @@ alpine_root
 apk-tools-static*
 *.rsa.pub
 sbin
+outputs
