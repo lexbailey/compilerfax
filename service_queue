@@ -11,8 +11,9 @@ while True:
     if len(all_files) > 0:
         f = all_files[0]
         print(f"Process file {f}")
-        subprocess.run(['./build_and_run', f])
-        os.unlink(os.path.join(d, f))
+        fullpath = os.path.join(d, f)
+        subprocess.run(['./build_and_run', fullpath])
+        os.unlink(fullpath)
         continue
     time.sleep(5)
         
