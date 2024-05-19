@@ -1,0 +1,2 @@
+root:x:0:0:root:/root:/sbin/nologin
+low:x:500:100:low:/work_dir:/bin/ash

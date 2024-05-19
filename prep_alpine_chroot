@@ -2,22 +2,28 @@
 
 set -e
 
-if [ $# -ne 2 ]; then
-    echo "Usage: $0 <host_low_username> <arch>"
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <arch>"
     exit 1
 fi
 
+if [ "x$OUTERUSER" == "x" ] ; then
+    echo "Please set OUTERUSER to the host-side low privilaged user name"
+    exit 1
+fi
 MIRROR='https://uk.alpinelinux.org/alpine/latest-stable/main'
-ARCH=$2
+ARCH=$1
 APKPKG='apk-tools-static-2.14.4-r0.apk'
-OUTERUSER=$1
 
-mkdir alpine_root
+AROOT=alpine_root
+mkdir "$AROOT"
 curl -LO "$MIRROR/$ARCH/$APKPKG"
 tar -xzf "$APKPKG"
-./sbin/apk.static -X "$MIRROR" -U --allow-untrusted -p alpine_root/ --initdb add alpine-base build-base || true
-mkdir alpine_root/workdir
-cp startup alpine_root/workdir
-cp capture_the_flag_inner alpine_root/workdir/capture_the_flag
-chown -R root:root alpine_root
-chown $OUTERUSER:$OUTERUSER alpine_root/workdir
+./sbin/apk.static -X "$MIRROR" -U --allow-untrusted -p "$AROOT" --initdb add alpine-base build-base || true
+mkdir "$AROOT/workdir"
+cp alpine_passwd "$AROOT/etc/passwd"
+cp alpine_group "$AROOT/etc/group"
+cp startup "$AROOT/workdir"
+cp capture_the_flag_inner "$AROOT/workdir/capture_the_flag"
+chown -R root:root "$AROOT"
+chown $OUTERUSER:$OUTERUSER "$AROOT/workdir"

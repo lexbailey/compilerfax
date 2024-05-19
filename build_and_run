@@ -60,5 +60,10 @@ if [ $COMPILE_RC -eq 0 ]; then
     echo "Program execution ended at   $PROGEND" >> $SUM
 fi
 
+echo Run complete, generating response PDF...
+./build_document
+ps2pdf result.pd result.pdf
+echo Sending fax...
+sendfax -f "$FAXID" -d "$SENDER" result.pdf
 echo Complete
 
