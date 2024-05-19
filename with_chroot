@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
 
 ROOT=$PWD/alpine_root
-OUTERUID=$(id -u $OUTERUSER)
-OUTERGID=$(id -g $OUTERUSER)
-env -i unshare -imnpuUCT --map-root --map-users $OUTERUID,500,1 --map-groups $OUTERGID,500,1 -R alpine_root -S 500 --wd /workdir /workdir/startup "$@"
+env -i unshare -imnpuUCT --map-root --map-user 500 --map-groups 500 -R alpine_root -S 500 --wd /workdir /workdir/startup "$@"
