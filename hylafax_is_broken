@@ -1,0 +1,11 @@
+Some problems that I came across when using hylafax on raspbian:
+
+during setup, using faxaddmodem: ondelay is not able to contact the modem, and hangs
+fix option 1: rename ondelay so that faxaddmodem can't find it and uses the builtin code instead
+fix option 2: modify faxaddmodem so that it doesn't even try to use ondelay
+fix option 3: manually construct the config file for the modem
+
+faxrecvd looks for config in /var/spool/hylafax/etc, but it is bind-mounted to /etc/hylafax when the faxgetty service starts
+fix: modify the faxrecvd file to look in /etc/hylafax instead
+
+

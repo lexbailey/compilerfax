@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+rm -rf alpine_root sbin
+rm -rf apk-tools_static*

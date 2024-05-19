@@ -1,0 +1,13 @@
+Reading this file is step 1
+
+If you can tell me (Lex) the contents of the file called capture_the_flag from outside this container then you win!
+
+I'm not sure what you win. I don't have a prize for you. But I would like to know how to secure my container better.
+
+To save you some time:
+ - the container runs a near-bare-minimum Apline Linux userland
+ - the host is a Raspberry Pi running Raspbian
+ - the container is running programs as a low-privilage user, not root
+ - the container is constructed using `unshare` to make a whole bunch of empty kernel namesapces
+ - the host _is_ connected to the internet, but the only user that's allowed to log in can only do so with an ssh key
+ - the only other connection to the host is via fax

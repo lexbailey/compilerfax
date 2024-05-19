@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+ROOT=$PWD/alpine_root
+env -i unshare -imnpuUCT --map-root --map-users 500:1001:1 --map-groups 500:1001:1 -R alpine_root -S 500 --wd /workdir /workdir/startup "$@"

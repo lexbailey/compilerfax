@@ -1,0 +1,6 @@
+.PKGINFO
+alpine_root
+*.apk
+apk-tools-static*
+*.rsa.pub
+sbin
