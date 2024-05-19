@@ -62,7 +62,7 @@ fi
 
 echo Run complete, generating response PDF...
 ./build_document
-ps2pdf result.pd result.pdf
+ps2pdf result.ps result.pdf
 echo Sending fax...
 sendfax -f "$FAXID" -d "$SENDER" result.pdf
 echo Complete
