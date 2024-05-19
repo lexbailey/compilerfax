@@ -2,6 +2,5 @@
 
 ROOT=$PWD/alpine_root
 OUTERUID=$(id -u $OUTERUSER)
-echo $OUTERUSER=$OUTERUID
-echo env -i unshare -imnpuUCT --map-root --map-users 500:$OUTERUID:1 --map-groups 500:$UID:1 -R alpine_root -S 500 --wd /workdir /workdir/startup "$@"
-env -i unshare -imnpuUCT --map-root --map-users 500:$OUTERUID:1 --map-groups 500:$UID:1 -R alpine_root -S 500 --wd /workdir /workdir/startup "$@"
+OUTERGID=$(id -g $OUTERUSER)
+env -i unshare -imnpuUCT --map-root --map-users 500:$OUTERUID:1 --map-groups 500:$OUTERGID:1 -R alpine_root -S 500 --wd /workdir /workdir/startup "$@"
