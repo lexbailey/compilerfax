@@ -19,9 +19,9 @@ DESTPROG="alpine_root/workdir/program.c"
 cp "$PROGRAM" "$DESTPROG"
 chown $OUTERUSER:$OUTERUSER "$DESTPROG"
 
+mkdir -p outputs
 echo "" > outputs/program_stderr
 echo "" > outputs/program_stdout
-mkdir -p outputs
 set +e
 COMPSTART=$(date --rfc-3339=seconds)
 ./with_chroot 'gcc program.c -o program' 2> outputs/compilation_stderr > outputs/compilation_stdout
