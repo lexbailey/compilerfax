@@ -6,12 +6,18 @@ import time
 import subprocess
 d = sys.argv[1]
 
+def is_in_use(p):
+    return subprocess.run(['fuser', p]).returncode == 0
+
 while True:
     all_files = [f for f in sorted(os.listdir(d)) if f != 'seqf']
     if len(all_files) > 0:
         f = all_files[0]
         print(f"Process file {f}")
         fullpath = os.path.join(d, f)
+        while is_in_use(fullpath):
+            print("waiting for file to close")
+            time.sleep(1)
         subprocess.run(['./build_and_run', fullpath])
         os.unlink(fullpath)
         continue
