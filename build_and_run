@@ -3,16 +3,25 @@
 set -e
 
 if [ $# -ne 1 ]; then
-    echo "Usage: $0 <program.c>"
+    echo "Usage: $0 <program.tiff>"
     exit 1
 fi
 
 PROGRAMTIFF="$1"
 
+convert $PROGRAMTIFF -resize 2970x2100\! temp.tif
+mv temp.tif $PROGRAMTIFF
+
 
 PROGRAM="ocr_result.c"
-tesseract "$PROGRAMTIFF" "$PROGRAM" --user-words CCode tessconfig
-mv "$PROGRAM.txt" "$PROGRAM"
+tesseract "$PROGRAMTIFF" "$PROGRAM" --psm 6 --user-words CCode tessconfig
+clang-format --style=mozilla < "$PROGRAM.txt" > "$PROGRAM"
+
+SENDER=$(./find_sender $PROGRAM)
+if [ "x$SENDER" == "x" ]; then
+    echo "No sender detected"
+    exit 1
+fi
 
 DESTPROG="alpine_root/workdir/program.c"
 
@@ -64,6 +73,6 @@ echo Run complete, generating response PDF...
 ./build_document
 ps2pdf result.ps result.pdf
 echo Sending fax...
-sendfax -f "$FAXID" -d "$SENDER" result.pdf
+#sendfax -f "$FAXID" -d "$SENDER" result.pdf
 echo Complete
 

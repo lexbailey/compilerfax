@@ -1,0 +1,54 @@
+# $Id$
+
+#
+# Configuration for a Rockwell/Conexant K56 Class 1.0 modem using
+# the RCV56DPF and similar chipsets.  These chipsets are generally
+# flash- upgradable and appear on ISA as well as PCI.  They
+# support "Class 1.0" which means that they have "adaptive receive"
+# (AT+FAR=1), but not V.34.
+#
+#    Comtrol RocketModem II/III/IV
+#    MultiTech MT5600ZDX
+#    Zoltrix FMVSP56i3
+#
+#
+CountryCode:		0
+AreaCode:		0
+FAXNumber:		8
+LongDistancePrefix:	0
+InternationalPrefix:	0
+DialStringRules:	etc/dialrules
+ServerTracing:		1
+SessionTracing:		11
+RecvFileMode:		0600
+LogFileMode:		0600
+DeviceMode:		0600
+RingsBeforeAnswer:	1
+SpeakerVolume:		off
+GettyArgs:		"-h %l dx_%s"
+LocalIdentifier:	CompilerFax
+TagLineFont:		etc/lutRS18.pcf
+TagLineFormat:		"From %%l|%c|Page %%P of %%T"
+MaxRecvPages:		25
+#
+#
+# Modem-related stuff: should reflect modem command interface
+# and hardware connection/cabling (e.g. flow control).
+#
+ModemType:		Class1.0	# use this to supply a hint
+ModemRate:		19200		# rate for DCE-DTE communication
+ModemFlowControl:	rtscts		# default
+#
+# With the RocketModem IV (and possibly III) you may need to use a much
+# higher ModemRate than 19200 because, apparently, it suffers from potential
+# buffer underrun problems.  Fortunately, it doesn't have buffer overflow
+# issues, and so using 115200 should work (both rtscts and xonxoff test good).
+#
+ModemNoFlowCmd:		AT&K0		# setup no flow control
+ModemHardFlowCmd:	AT&K3		# setup hardware flow control
+ModemSoftFlowCmd:	AT&K4		# setup software flow control
+ModemSetupDTRCmd:	AT&D2		# setup so DTR drop resets modem
+ModemSetupDCDCmd:	AT&C1		# setup so DCD reflects carrier (or not)
+#
+Class1AdaptRecvCmd:	AT+FAR=1	# reports carrier detection mismatches
+ModemDialCmd:       ATX3DP%s
