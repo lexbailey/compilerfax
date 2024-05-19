@@ -7,14 +7,23 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
+mkdir -p outputs
+mkdir -p servicelog
+
 PROGRAMTIFF="$1"
 
-convert $PROGRAMTIFF -resize 2970x2100\! temp.tif
-mv temp.tif $PROGRAMTIFF
+convert $PROGRAMTIFF -resize 2100x2970\! temp.tif
+
+tiffname=$(basename $PROGRAMTIFF)
+logdir="servicelog/$tiffname"
+mkdir -p "$logdir"
+cp temp.tif "$logdir/$tiffname"
+
 
 
 PROGRAM="ocr_result.c"
-tesseract "$PROGRAMTIFF" "$PROGRAM" --psm 6 --user-words CCode tessconfig
+#tesseract temp.tif "$PROGRAM" --psm 6 --user-words CCode tessconfig
+tesseract temp.tif "$PROGRAM" --psm 6 tessconfig
 clang-format --style=mozilla < "$PROGRAM.txt" > "$PROGRAM"
 
 SENDER=$(./find_sender $PROGRAM)
@@ -28,7 +37,6 @@ DESTPROG="alpine_root/workdir/program.c"
 cp "$PROGRAM" "$DESTPROG"
 chown $OUTERUSER:$OUTERUSER "$DESTPROG"
 
-mkdir -p outputs
 echo "" > outputs/program_stderr
 echo "" > outputs/program_stdout
 set +e
@@ -72,7 +80,8 @@ fi
 echo Run complete, generating response PDF...
 ./build_document
 ps2pdf result.ps result.pdf
+cp result.pdf "$logdir/result.pdf"
 echo Sending fax...
-#sendfax -f "$FAXID" -d "$SENDER" result.pdf
+sendfax -f "$FAXID" -d "$SENDER" result.pdf
 echo Complete
 
