@@ -12,11 +12,13 @@ mkdir -p servicelog
 
 PROGRAMTIFF="$1"
 
-convert $PROGRAMTIFF -resize 2100x2970\! temp.tif
+convert $PROGRAMTIFF -resize 2100x2970\! temp_precrop.tif
+convert temp_precrop.tif -crop 2100x2870+0+50 temp.tif
 
 tiffname=$(basename $PROGRAMTIFF)
 logdir="servicelog/$tiffname"
 mkdir -p "$logdir"
+cp temp_precrop.tif "$logdir/precrop_$tiffname"
 cp temp.tif "$logdir/$tiffname"
 
 
