@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+AROOT=alpine_root
+rm -rf "$AROOT/workdir"
+mkdir "$AROOT/workdir"
+cp startup "$AROOT/workdir"
+cp capture_the_flag_inner "$AROOT/workdir/capture_the_flag"
+chown -R root:root "$AROOT"
+chown $OUTERUSER:$OUTERUSER "$AROOT/workdir"

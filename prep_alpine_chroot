@@ -20,10 +20,6 @@ mkdir "$AROOT"
 curl -LO "$MIRROR/$ARCH/$APKPKG"
 tar -xzf "$APKPKG"
 ./sbin/apk.static -X "$MIRROR" -U --allow-untrusted -p "$AROOT" --initdb add alpine-base build-base || true
-mkdir "$AROOT/workdir"
 cp alpine_passwd "$AROOT/etc/passwd"
 cp alpine_group "$AROOT/etc/group"
-cp startup "$AROOT/workdir"
-cp capture_the_flag_inner "$AROOT/workdir/capture_the_flag"
-chown -R root:root "$AROOT"
-chown $OUTERUSER:$OUTERUSER "$AROOT/workdir"
+

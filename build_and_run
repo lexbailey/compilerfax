@@ -20,11 +20,10 @@ mkdir -p "$logdir"
 cp temp.tif "$logdir/$tiffname"
 
 
-
 PROGRAM="ocr_result.c"
 #tesseract temp.tif "$PROGRAM" --psm 6 --user-words CCode tessconfig
 tesseract temp.tif "$PROGRAM" --psm 6 tessconfig
-clang-format --style=mozilla < "$PROGRAM.txt" > "$PROGRAM"
+clang-format --style=llvm < "$PROGRAM.txt" > "$PROGRAM"
 
 SENDER=$(./find_sender $PROGRAM)
 if [ "x$SENDER" == "x" ]; then
@@ -32,6 +31,7 @@ if [ "x$SENDER" == "x" ]; then
     exit 1
 fi
 
+./reset_container
 DESTPROG="alpine_root/workdir/program.c"
 
 cp "$PROGRAM" "$DESTPROG"
