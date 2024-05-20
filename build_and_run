@@ -82,6 +82,6 @@ echo Run complete, generating response PDF...
 ps2pdf result.ps result.pdf
 cp result.pdf "$logdir/result.pdf"
 echo Sending fax...
-sendfax -f "$FAXID" -d "$SENDER" result.pdf
+sendfax -n -f "$FAXID" -d "$SENDER" result.pdf
 echo Complete
 
