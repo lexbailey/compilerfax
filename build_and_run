@@ -41,12 +41,12 @@ echo "" > outputs/program_stderr
 echo "" > outputs/program_stdout
 set +e
 COMPSTART=$(date --rfc-3339=seconds)
-./with_chroot 'gcc program.c -o program' 2> outputs/compilation_stderr > outputs/compilation_stdout
+timeout -s KILL 10 ./with_chroot 'gcc program.c -o program' 2> outputs/compilation_stderr > outputs/compilation_stdout
 COMPILE_RC=$?
 COMPEND=$(date --rfc-3339=seconds)
 if [ $COMPILE_RC -eq 0 ]; then
     PROGSTART=$(date --rfc-3339=seconds)
-    ./with_chroot ./program 2> outputs/program_stderr > outputs/program_stdout
+    timeout -s KILL 60 ./with_chroot ./program 2> outputs/program_stderr > outputs/program_stdout
     PROGRAM_RC=$?
     PROGEND=$(date --rfc-3339=seconds)
 fi
@@ -72,9 +72,15 @@ fi
 
 echo "Compilation started at $COMPSTART" >> $SUM
 echo "Compilation ended at   $COMPEND" >> $SUM
+if [ $COMPILE_RC -eq 137 ]; then
+    echo "Compilation was terminated by timeout" >> $SUM
+fi
 if [ $COMPILE_RC -eq 0 ]; then
     echo "Program execution started at $PROGSTART" >> $SUM
     echo "Program execution ended at   $PROGEND" >> $SUM
+    if [ $PROGRAM_RC -eq 137 ]; then
+        echo "Program execution was terminated by timeout" >> $SUM
+    fi
 fi
 
 echo Run complete, generating response PDF...
