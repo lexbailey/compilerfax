@@ -44,7 +44,7 @@ echo "" > outputs/program_stdout
 LIMITS='-u5 -n20 -s65535 -m1048576'
 set +e
 COMPSTART=$(date --rfc-3339=seconds)
-prlimit $LIMITS -t20 timeout -s KILL 10 ./with_chroot 'gcc program.c -o program' 2> outputs/compilation_stderr > outputs/compilation_stdout
+prlimit $LIMITS -t20 timeout -s KILL 10 ./with_chroot 'gcc -lm program.c -o program' 2> outputs/compilation_stderr > outputs/compilation_stdout
 COMPILE_RC=$?
 COMPEND=$(date --rfc-3339=seconds)
 if [ $COMPILE_RC -eq 0 ]; then
