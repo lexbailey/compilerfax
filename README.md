@@ -4,6 +4,68 @@ You fax it some C code, it compiles it, runs it, faxes back the result
 
 A quick demo vid: https://youtu.be/pJ-25-pRhpY
 
+## Tips for users
+
+The OCR is far from perfect. You need to use a font that is good for OCR. I have had success using Calibri. FreeMono is not too bad, but tends to be a little less predictable.
+
+Some of the worst problems you will encounter are some characters being misread:
+
+* O -> 0
+* i -> 1
+* x -> X
+
+There are others, of course. This is not a complete list. In my testing I have been avoiding using "i" and "x" as variable names. It seems to be hard for the ORC to read "x" in the correct case. It often wants to upper-case it for some reason. Similarly, avoid "i" if you can. Even with good programming fonts the OCR still struggles.
+
+Put spaces around things...
+
+`a+=1;` tends to be seen by the OCR program as a _word_ of sorts, rather than four seperate things. try using `a += 1 ;`
+
+I also found that `i++` was often misread as `itt`. adding a space in there (`i ++`) sometimes helped, but the best thing to do was to use `i += 1`, and to avoid the variable name `i` entirely if possible, as mentioned above.
+
+The OCR program is not trained specifically on code. It is mostly trained on prose, and so using full words will likely produce better results. `int total = 0;` is better than `int t = 0;`
+
+Most importantly, DO NOT FORGET: you must have the `REPLY = <number> #` text in your program, or you won't get your results faxed back to you. (see the usage section below) The spaces are optional, but having the spaces helps the OCR.
+
+If you're really having trouble with some text, then you could try getting creative with the program so that bad OCR has less of an effect.
+
+For example, consider this program:
+
+```
+#include <stdio.h>
+
+int main ( ) {
+    printf ( "Hello World\n" ) ;
+    int i = 1;
+    while ( i < 11 ) {
+        i += 1 ;
+        printf ( "%d\n" , i - 1 ) ;
+    }
+}
+```
+
+It has quite a lot of instances of the letter i by itself, and the number 1 by itself or as part of the number 11. There's 9 instances of `i`, or `1`. This is 9 chances for the OCR to fail.
+
+The obvious first thing to do is to rename `i` to something else, like `a`. This would get us down to only having to worry about the 5 instances of `1` which each be misread. That's 5 chances for the OCR to fail. But you can also remove all of the 1 digits...
+
+The program below does exactly what the one above does, but has none of the likely-misread characters)
+
+```
+#include <stdio.h>
+#define one ( 4 - 3 )
+#define eleven ( 3 + 4 + 4 )
+
+int main ( ) {
+    printf ( "Hello World\n" ) ;
+    int a = one ;
+    while ( a < eleven ) {
+        a += one ;
+        printf ( "%d\n" , a - one ) ;
+    }
+}
+```
+
+the digits 3 and 4 are fairly distinct in most fonts, they are much less likely to be misread.
+
 ## Hardware
 
 - Raspberry Pi running Raspbian Trixie (older versions have a bug in unshare that prevents the container from mapping users correctly)
@@ -25,7 +87,7 @@ Sorry, these instructions are not very detailed right now, maybe I'll go into mo
 
 ## Usage
 
-1. Get a sheet of paper with some C code on it. Leave your reply phone number in the source code with the text "REPLY=1234#" where 1234 is replaced with your phone number.
+1. Get a sheet of paper with some C code on it. Leave your reply phone number in the source code with the text "REPLY = 1234 #" where 1234 is replaced with your phone number.
 2. Fax the C code to CompilerFax
 3. wait for a response from CompilerFax
 
