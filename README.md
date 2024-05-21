@@ -15,7 +15,7 @@ You don't have to use a raspberry pi. You can use some other system, as long as 
 
 Sorry, these instructions are not very detailed right now, maybe I'll go into more detail when I'm in less of a rush, but...
 
-1. install hylafax on the raspberry pi, and some other deps: `sudo apt install hylafax-server clang-format tesseract`
+1. install hylafax on the raspberry pi, and some other deps: `sudo apt install hylafax-server clang-format tesseract-ocr`
 2. configure hylafax for your modem
 3. (optional) swear at hylafax for all the trouble that it gave you in steps 1 and 2 (see `hylafax_is_broken` for details of bugs you might encounter)
 4. clone this repo on to the ras pi (or your system of choice)
