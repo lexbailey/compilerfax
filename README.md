@@ -49,15 +49,21 @@ Hylafax does most of the heavy lifting. It handles all of the modem communicatio
 The programs that make the compiler work are:
 
 `service_queue` - reads from the incoming fax queue, launches `build_and_run` for each incoming fax
+
 `build_and_run` - runs once per fax. This process must complete for each incoming fax before the next fax starts to be processed. It does the OCR on the incoming .tif file, generates a report, and adds it to the outgoing fax queue with `sendfax`
+
 `build_document` - is called by `build_and_run` to generate a postscript file, which can then be turned into a pdf to fax as a reply
+
 `reset_container` - is called by `build_and_run` before each compilation and run job to reset the container to the base state (delete any files created by the last job)
+
 `with_chroot` - this is the main wrapper around the alpine linux container. It does the `unshare` call to run a contained program in a bunch of empty namespaces. The user OUTERUSER is mapped to the `low` user in the container. root is also mapped, and the program runs as low. This prevents the contained program from modifying most of the container and stops the program for being able to escape the container (hopefully)
+
 `line_numbers` - adds line numbers to the program listing (for building the report). Fairly boring program is this one.
 
 Other programs, not used in normal operation of the service, but useful for maintenence:
 
 `cleanup` - deletes the alpine linux root, and the copy of apk that installed it
+
 `prep_alpine_chroot` - creates the alpine linux root using apk
 
 normally you want to run `./cleanup` and then `./prep_alpine_chroot aarch64` if there's been a significant update to the container system. If in doubt then just run it, it can't do any harm
