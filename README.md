@@ -6,20 +6,22 @@ A quick demo vid: https://youtu.be/pJ-25-pRhpY
 
 ## Hardware
 
-- Raspberry Pi running Raspbian Trixie (older versions have a bug in unshare that prevents the container from working correctly)
+- Raspberry Pi running Raspbian Trixie (older versions have a bug in unshare that prevents the container from mapping users correctly)
 - Fax modem (I used a startech USB modem)
+
+You don't have to use a raspberry pi. You can use some other system, as long as it can run hylafax and talk to a modem.
 
 ## Setup
 
 Sorry, these instructions are not very detailed right now, maybe I'll go into more detail when I'm in less of a rush, but...
 
-1. install hylafax on the raspberry pi
+1. install hylafax on the raspberry pi, and some other deps: `sudo apt install hylafax-server clang-format tesseract`
 2. configure hylafax for your modem
 3. (optional) swear at hylafax for all the trouble that it gave you in steps 1 and 2 (see `hylafax_is_broken` for details of bugs you might encounter)
-4. clone this repo on to the ras pi
+4. clone this repo on to the ras pi (or your system of choice)
 5. create a config file (a sourcme that sets OUTERUSER to `pi` (or whatever username you chose for the pi) and source it. it should also set FAXID to something like "CompilerFax@1234" where 1234 is your phone number
 6. run `sudo ./prep_alpine_chroot`
-7. set up the job queue program to run on boot (copy the systemd unit into the systemd config, enable it, start it)
+7. set up the job queue program to run on boot (copy the systemd unit into the systemd config, enable it, start it) TODO add systemd unit file to repo
 
 ## Usage
 
