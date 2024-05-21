@@ -14,17 +14,35 @@ def text(s):
     return f"""<{s}> show"""
 
 cur_y = 740
+num_pages = 1
 
 def nextline():
-    global cur_y
+    global cur_y, num_pages
     cur_y -= 12
     if cur_y <= 80:
         cur_y = 740
+        num_pages += 1
         return "showpage"
     return ""
 
-def section(heading, body):
+truncated = False
+
+def snip():
     global cur_y
+    return f""" {font("TimesNew-Bold")}
+newpath
+{pos(70, cur_y)}
+{text("--8<-- REPORT LONGER THAN 10 PAGES! TRUNCATED! --8<--")}
+"""
+
+def is_too_long():
+    global num_pages, cur_y
+    return num_pages >= 10 and cur_y <= 100 # near the end of the tenth page
+
+def section(heading, body):
+    global cur_y, num_pages, truncated
+    if truncated:
+        return ""
     if body.strip() == '':
         return ""
     res= f"""{font("TimesNew-Bold")}
@@ -40,11 +58,19 @@ newpath
 {pos(100, cur_y)}
 {text(a)}
 """+nextline()
+            if is_too_long():
+                truncated = True
+                res += snip()
+                return res
             
         res += f"""
 {pos(100, cur_y)}
 {text(l)}
 """+nextline()
+        if is_too_long():
+            truncated = True
+            res += snip()
+            return res
 
     return res
 

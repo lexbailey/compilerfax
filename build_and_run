@@ -13,6 +13,7 @@ mkdir -p servicelog
 PROGRAMTIFF="$1"
 
 convert $PROGRAMTIFF -resize 2100x2970\! temp_precrop.tif
+#cp $PROGRAMTIFF temp_precrop.tif # use this instead of the line above to skip the reshaping that is needed in production (probably a hylafax bug that makes the line above required anyway)
 convert temp_precrop.tif -crop 2100x2870+0+50 temp.tif
 
 tiffname=$(basename $PROGRAMTIFF)
@@ -23,8 +24,7 @@ cp temp.tif "$logdir/$tiffname"
 
 
 PROGRAM="ocr_result.c"
-#tesseract temp.tif "$PROGRAM" --psm 6 --user-words CCode tessconfig
-tesseract temp.tif "$PROGRAM" --psm 6 tessconfig
+tesseract temp.tif "$PROGRAM" --psm 6 --user-words CCode tessconfig
 clang-format --style=llvm < "$PROGRAM.txt" > "$PROGRAM"
 
 SENDER=$(./find_sender $PROGRAM)
