@@ -2,6 +2,8 @@
 
 You fax it some C code, it compiles it, runs it, faxes back the result
 
+A quick demo vid: https://youtu.be/pJ-25-pRhpY
+
 ## Hardware
 
 - Raspberry Pi running Raspbian Trixie (older versions have a bug in unshare that prevents the container from working correctly)
