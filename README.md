@@ -4,6 +4,10 @@ You fax it some C code, it compiles it, runs it, faxes back the result
 
 A quick demo vid: https://youtu.be/pJ-25-pRhpY
 
+## If you send me your code
+
+Just a quick note for anyone sending faxes to any CompilerFax instance that I (Lex Bailey) am running (probably at EMF Camp). If you send me a fax then you are granting me a licence to share the contents of that fax for information/education/entertainment purposes. (I'd love to collect some of the best faxes, and best attempts to break out of the container, and share them as a fun look at how people used this service.) Thanks :)
+
 ## Tips for users
 
 The OCR is far from perfect. You need to use a font that is good for OCR. I have had success using Calibri. FreeMono is not too bad, but tends to be a little less predictable.
