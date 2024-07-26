@@ -14,7 +14,7 @@ PROGRAMTIFF="$1"
 
 convert $PROGRAMTIFF -resize 2100x2970\! temp_precrop.tif
 #cp $PROGRAMTIFF temp_precrop.tif # use this instead of the line above to skip the reshaping that is needed in production (probably a hylafax bug that makes the line above required anyway)
-convert temp_precrop.tif -crop 2100x2870+0+50 temp.tif
+convert temp_precrop.tif -crop 2100x2670+0+150 temp.tif
 
 tiffname=$(basename $PROGRAMTIFF)
 logdir="servicelog/$tiffname"
@@ -32,6 +32,10 @@ if [ "x$SENDER" == "x" ]; then
     echo "No sender detected"
     exit 1
 fi
+if [ "x$SENDER" == "x$FAXNUM" ]; then
+    echo "send to self ignored"
+    exit 1
+fi
 
 ./reset_container
 DESTPROG="alpine_root/workdir/program.c"
@@ -44,12 +48,12 @@ echo "" > outputs/program_stdout
 LIMITS='-u5 -n20 -s65535 -m1048576'
 set +e
 COMPSTART=$(date --rfc-3339=seconds)
-prlimit $LIMITS -t20 timeout -s KILL 10 ./with_chroot 'gcc -lm program.c -o program' 2> outputs/compilation_stderr > outputs/compilation_stdout
+prlimit $LIMITS -t20 timeout -s KILL 10 ./with_chroot 'gcc -lm program.c -o program' 2> >(head -c 50000 > outputs/compilation_stderr) > >(head -c 50000 > outputs/compilation_stdout)
 COMPILE_RC=$?
 COMPEND=$(date --rfc-3339=seconds)
 if [ $COMPILE_RC -eq 0 ]; then
     PROGSTART=$(date --rfc-3339=seconds)
-    prlimit $LIMITS -t70 timeout -s KILL 60 ./with_chroot ./program 2> outputs/program_stderr > outputs/program_stdout
+    prlimit $LIMITS -t70 timeout -s KILL 60 ./with_chroot ./program 2> >(head -c 50000 > outputs/program_stderr) > >(head -c 50000 > outputs/program_stdout)
     PROGRAM_RC=$?
     PROGEND=$(date --rfc-3339=seconds)
 fi
@@ -90,7 +94,10 @@ echo Run complete, generating response PDF...
 ./build_document
 ps2pdf result.ps result.pdf
 cp result.pdf "$logdir/result.pdf"
+chmod o+r "$logdir"
+chmod o+x "$logdir"
 echo Sending fax...
+echo "sendfax -n -f '$FAXID' -d '$SENDER' result.pdf"
 sendfax -n -f "$FAXID" -d "$SENDER" result.pdf
 echo Complete
 

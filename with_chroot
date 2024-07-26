@@ -3,4 +3,4 @@
 ROOT=$PWD/alpine_root
 MAPUID=$(id -u $OUTERUSER)
 MAPGID=$(id -g $OUTERUSER)
-env -i unshare -imnpuUCT --map-root --map-users $MAPUID,500,1 --map-groups $MAPGID,500,1 -R alpine_root -S 500 --wd /workdir /workdir/startup "$@"
+unshare -imnpuUCT --map-root --map-users 1100:$MAPUID:1 --map-groups 1100:$MAPGID:1 -R alpine_root -S 1100 --wd /workdir /workdir/startup "$@"
